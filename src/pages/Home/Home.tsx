@@ -7,7 +7,7 @@ export default function Home() {
     <div className={styles.container}>
       <h1 className={styles.title}>Hello!</h1>
       <p className={styles.caption}>Stay productive.</p>
-      {<TasksList />}
+      <TasksList />
     </div>
   );
 }
