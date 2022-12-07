@@ -1,0 +1,77 @@
+@import '@/css/theme.less';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: @box-shadow-default;
+  border-radius: @border-radius-default;
+  background: @color-bg-base;
+  padding: 16px;
+  border: 2px solid transparent;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer {
+  display: flex;
+}
+
+.footer__item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: @color-text-secondary;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.label {
+  background-color: @color-bg-warning;
+  color: white;
+  font-weight: 500;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.completed {
+  border-color: @border-color-primary;
+  opacity: .5;
+  & .title {
+    text-decoration: line-through;
+  }
+}
+
+.expired {
+  border-color: @border-color-warning;
+}

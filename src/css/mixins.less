@@ -1,0 +1,30 @@
+@import '@/css/theme.less';
+
+.label {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.input-base {
+  border: 2px solid @border-color-default;
+  width: 100%;
+  border-radius: @border-radius-default;
+  outline: none;
+
+  &:focus {
+    border-color: @border-color-primary;
+  }
+}
+
+.input {
+  .input-base();
+  padding: 0 @input-padding;
+  height: @input-height;
+}
+
+.textarea {
+ .input-base();
+ padding: @input-padding;
+ resize: vertical;
+}

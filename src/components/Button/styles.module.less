@@ -1,0 +1,32 @@
+@import '@/css/theme.less';
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: @input-height;
+  border-radius: @border-radius-default;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.primary {
+  background-color: @color-bg-primary;
+  color: white;
+}
+
+.secondary {
+  background-color: @color-bg-secondary;
+  color: black;
+}
+
+.icon {
+  width: @input-height;
+}
+
+.disabled {
+  background-color: lightgray;
+  color: gray;
+  cursor: not-allowed;
+}
