@@ -4,6 +4,10 @@ import { Task, TaskStatus } from '@/types/task';
 
 import { useFirestoreDocuments } from './useFirestoreDocuments';
 
+/**
+ * Hook that uses `useFirestoreDocuments` hook to manage Tasks and updates a context.
+ * @returns A number of fuctions to manage `Tasks`.
+ */
 export const useTasks = () => {
   const { tasks, dispatch } = useTasksContext();
   const {
@@ -13,6 +17,9 @@ export const useTasks = () => {
     remove: removeDocument,
   } = useFirestoreDocuments();
 
+  /**
+   * The function gets all `Tasks` from the databse and sets to the context.
+   */
   const fetch = async () => {
     try {
       const documents = await fetchDocuments('tasks');
@@ -36,6 +43,10 @@ export const useTasks = () => {
     }
   };
 
+  /**
+   * The function creates a `Task` in the databse and sets to the context.
+   * @param payload - Data to create a `Task`.
+   */
   const create = async (payload: TaskPayload) => {
     try {
       const document = await createDocument('tasks', payload);
@@ -49,6 +60,11 @@ export const useTasks = () => {
     }
   };
 
+  /**
+   * The function changes the status of a `Task` and updates it in the context.
+   * @param {string} taskId - Unique udentifier of a task.
+   * @param {string} status - One of the available statuses like `active`, `expired`, `completed`.
+   */
   const changeStatus = async (taskId: string, status: TaskStatus) => {
     try {
       await updateDocument('tasks', taskId, { status });
@@ -64,6 +80,11 @@ export const useTasks = () => {
     }
   };
 
+  /**
+   * The function updates a `Task` data in the database and the context.
+   * @param {string} taskId - Unique udentifier of a task.
+   * @param {string} data - Data to update.
+   */
   const update = async (taskId: string, data: TaskPayload) => {
     try {
       await updateDocument('tasks', taskId, data);
@@ -78,6 +99,11 @@ export const useTasks = () => {
       throw new Error(error);
     }
   };
+
+  /**
+   * The function removes a `Task` from the database and the context.
+   * @param {string} taskId - Unique udentifier of a task.
+   */
   const remove = async (taskId: string) => {
     try {
       await removeDocument('tasks', taskId);
