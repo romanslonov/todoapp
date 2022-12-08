@@ -56,11 +56,10 @@ export const useTasks = () => {
     try {
       const promises: Promise<UploadResult>[] = [];
 
-      if (payload.files.length) {
-        payload.files.forEach((file) => {
-          promises.push(uploadFile(file));
-        });
-      }
+      payload.files.forEach((file) => {
+        promises.push(uploadFile(file));
+      });
+
       const uploads = await Promise.all(promises);
 
       const task: Omit<Task, 'id'> = {
@@ -115,11 +114,10 @@ export const useTasks = () => {
     try {
       const promises: Promise<UploadResult>[] = [];
 
-      if (data.files.length) {
-        data.files.forEach((file) => {
-          promises.push(uploadFile(file));
-        });
-      }
+      data.files.forEach((file) => {
+        promises.push(uploadFile(file));
+      });
+
       const uploads = await Promise.all(promises);
 
       const payload: Task = {
