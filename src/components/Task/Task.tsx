@@ -22,7 +22,7 @@ export default function Task({
   task: TaskType;
   onChangeStatus: (taskId: string, status: TaskStatus) => Promise<void>;
   onUpdate?: (task: TaskType, data: TaskPayload) => Promise<void>;
-  onRemove?: (taskId: string) => void;
+  onRemove?: (task: TaskType) => void;
 }) {
   const [isEditing, toggleEdit] = useState<boolean>(false);
   useTaskExpire(task, () => onChangeStatus(task.id, 'expired'));
@@ -70,7 +70,7 @@ export default function Task({
             </Button>
           )}
           {onRemove && (
-            <Button appearance="secondary" icon onClick={() => onRemove(task.id)}>
+            <Button appearance="secondary" icon onClick={() => onRemove(task)}>
               <TrashIcon width={16} height={16} />
             </Button>
           )}

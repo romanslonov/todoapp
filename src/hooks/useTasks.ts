@@ -20,7 +20,7 @@ export const useTasks = () => {
     update: updateDocument,
     remove: removeDocument,
   } = useFirestoreDocuments();
-  const { upload, getFileDownloadURL } = useStorage();
+  const { upload: uploadFile, remove: removeFile } = useStorage();
 
   /**
    * The function gets all `Tasks` from the databse and sets to the context.
@@ -58,7 +58,7 @@ export const useTasks = () => {
 
       if (payload.files.length) {
         payload.files.forEach((file) => {
-          promises.push(upload(file));
+          promises.push(uploadFile(file));
         });
       }
       const uploads = await Promise.all(promises);
@@ -117,7 +117,7 @@ export const useTasks = () => {
 
       if (data.files.length) {
         data.files.forEach((file) => {
-          promises.push(upload(file));
+          promises.push(uploadFile(file));
         });
       }
       const uploads = await Promise.all(promises);
@@ -161,13 +161,20 @@ export const useTasks = () => {
    * The function removes a `Task` from the database and the context.
    * @param {string} taskId - Unique udentifier of a task.
    */
-  const remove = async (taskId: string) => {
+  const remove = async (task: Task) => {
     try {
-      await removeDocument('tasks', taskId);
+      const promises: Promise<void>[] = [];
+
+      task.files.forEach((file) => promises.push(removeFile(file.path)));
+
+      await Promise.all(promises);
+
+      await removeDocument('tasks', task.id);
+
       dispatch({
         type: 'REMOVE_TASK',
         payload: {
-          taskId,
+          taskId: task.id,
         },
       });
     } catch (error) {

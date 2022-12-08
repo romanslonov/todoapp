@@ -1,4 +1,10 @@
-import { getDownloadURL, ref, uploadBytes, UploadResult } from 'firebase/storage';
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  UploadResult,
+} from 'firebase/storage';
 
 import { storage } from '@/services/firebase';
 
@@ -27,16 +33,30 @@ export const useStorage = ({ path } = { path: '/files/' }) => {
   };
 
   /**
+   * The function gets download URL of file.
    *
-   * @param path - Path to a file on the storage.
+   * @param {string} path - Path to a file on the storage.
    * @returns A `Promise` that will be resolved with a string.
    */
   const getFileDownloadURL = (path: string): Promise<string> => {
     return getDownloadURL(ref(storage, path));
   };
 
+  /**
+   * The function removes a file from the `Storage`.
+   *
+   * @param {string} path - Path to a file on the storage.
+   * @returns A `Promise` that will be resolved when file will be deleted.
+   */
+  const remove = (path: string) => {
+    const storageRef = ref(storage, path);
+
+    return deleteObject(storageRef);
+  };
+
   return {
     upload,
     getFileDownloadURL,
+    remove,
   };
 };
