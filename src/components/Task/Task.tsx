@@ -60,13 +60,15 @@ export default function Task({
           )}
         </div>
         <div className={styles.actions}>
-          <Button
-            appearance={isEditing ? 'primary' : 'secondary'}
-            icon
-            onClick={() => toggleEdit(!isEditing)}
-          >
-            <Cog6ToothIcon width={16} height={16} />
-          </Button>
+          {task.status !== 'completed' && (
+            <Button
+              appearance={isEditing ? 'primary' : 'secondary'}
+              icon
+              onClick={() => toggleEdit(!isEditing)}
+            >
+              <Cog6ToothIcon width={16} height={16} />
+            </Button>
+          )}
           {onRemove && (
             <Button appearance="secondary" icon onClick={() => onRemove(task.id)}>
               <TrashIcon width={16} height={16} />
