@@ -54,7 +54,7 @@ export default function TaskForm({
     ),
   });
 
-  const { upload, getFileDownloadURL } = useStorage();
+  const { getFileDownloadURL } = useStorage();
 
   const handleAddFile = async (task: Task) => {
     const files =
@@ -73,37 +73,9 @@ export default function TaskForm({
 
   const submit = async (data: FormInputs) => {
     try {
-      const files = [...data.files];
-      const promises: Promise<UploadResult>[] = [];
-
-      if (files.length) {
-        files.forEach((file) => {
-          promises.push(upload(file));
-        });
-      }
-      const uploads = await Promise.all(promises);
-
       const payload = {
         ...data,
-        status: task
-          ? data.due
-            ? isAfter(new Date(), parseISO(data.due))
-              ? 'expired'
-              : 'active'
-            : task.status
-          : 'active',
-        ...{ due: data.due ? new Date(data.due) : null },
-        created_at: new Date(),
-        files: [
-          ...(files.length
-            ? uploads.map((file) => ({
-                name: file.ref.name,
-                path: file.ref.fullPath,
-                id: file.metadata.md5Hash!,
-              }))
-            : []),
-          ...(task ? task.files : []),
-        ],
+        files: [...data.files],
       };
 
       await onSubmit(payload);

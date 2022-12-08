@@ -21,7 +21,7 @@ export default function Task({
 }: {
   task: TaskType;
   onChangeStatus: (taskId: string, status: TaskStatus) => Promise<void>;
-  onUpdate?: (taskId: string, data: TaskPayload) => Promise<void>;
+  onUpdate?: (task: TaskType, data: TaskPayload) => Promise<void>;
   onRemove?: (taskId: string) => void;
 }) {
   const [isEditing, toggleEdit] = useState<boolean>(false);
@@ -83,7 +83,7 @@ export default function Task({
             submitButtonText="Update task"
             title="Update task"
             task={task}
-            onSubmit={(data) => onUpdate(task.id, data)}
+            onSubmit={(data) => onUpdate(task, data)}
           />
         </div>
       ) : null}

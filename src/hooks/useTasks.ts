@@ -1,8 +1,12 @@
+import { isAfter, parseISO } from 'date-fns';
+import { UploadResult } from 'firebase/storage';
+
 import { TaskPayload } from '@/context/tasks/types';
 import { useTasksContext } from '@/hooks/useTasksContext';
 import { Task, TaskStatus } from '@/types/task';
 
 import { useFirestoreDocuments } from './useFirestoreDocuments';
+import { useStorage } from './useStorage';
 
 /**
  * Hook that uses `useFirestoreDocuments` hook to manage Tasks and updates a context.
@@ -16,6 +20,7 @@ export const useTasks = () => {
     update: updateDocument,
     remove: removeDocument,
   } = useFirestoreDocuments();
+  const { upload, getFileDownloadURL } = useStorage();
 
   /**
    * The function gets all `Tasks` from the databse and sets to the context.
@@ -44,16 +49,37 @@ export const useTasks = () => {
   };
 
   /**
-   * The function creates a `Task` in the databse and sets to the context.
+   * The function uploads files and creates a `Task` in the databse and dispatch to the context.
    * @param payload - Data to create a `Task`.
    */
   const create = async (payload: TaskPayload) => {
     try {
-      const document = await createDocument('tasks', payload);
+      const promises: Promise<UploadResult>[] = [];
+
+      if (payload.files.length) {
+        payload.files.forEach((file) => {
+          promises.push(upload(file));
+        });
+      }
+      const uploads = await Promise.all(promises);
+
+      const task: Omit<Task, 'id'> = {
+        ...payload,
+        ...{ due: payload.due ? new Date(payload.due) : null },
+        created_at: new Date(),
+        status: 'active',
+        files: uploads.map((file) => ({
+          name: file.ref.name,
+          path: file.ref.fullPath,
+          id: file.metadata.md5Hash!,
+        })),
+      };
+
+      const document = await createDocument('tasks', task);
 
       dispatch({
         type: 'CREATE_TASK',
-        payload: { task: { ...payload, id: document.id } },
+        payload: { task: { ...task, id: document.id } },
       });
     } catch (error) {
       throw new Error(error);
@@ -82,17 +108,50 @@ export const useTasks = () => {
 
   /**
    * The function updates a `Task` data in the database and the context.
-   * @param {string} taskId - Unique udentifier of a task.
-   * @param {string} data - Data to update.
+   * @param {object} task - Original task that needs to update.
+   * @param {object} data - Data to update.
    */
-  const update = async (taskId: string, data: TaskPayload) => {
+  const update = async (task: Task, data: TaskPayload) => {
     try {
-      await updateDocument('tasks', taskId, data);
+      const promises: Promise<UploadResult>[] = [];
+
+      if (data.files.length) {
+        data.files.forEach((file) => {
+          promises.push(upload(file));
+        });
+      }
+      const uploads = await Promise.all(promises);
+
+      console.log(data);
+
+      const payload: Task = {
+        ...task,
+        ...data,
+        status: data.due
+          ? isAfter(new Date(), parseISO(data.due))
+            ? 'expired'
+            : 'active'
+          : 'active',
+        ...{ due: data.due ? new Date(data.due) : null },
+        files: [
+          ...(uploads.length
+            ? uploads.map((file) => ({
+                name: file.ref.name,
+                path: file.ref.fullPath,
+                id: file.metadata.md5Hash!,
+              }))
+            : []),
+          ...(task ? task.files : []),
+        ],
+      };
+
+      await updateDocument('tasks', task.id, payload);
+
       dispatch({
         type: 'UPDATE_TASK',
         payload: {
-          taskId,
-          data,
+          taskId: task.id,
+          data: payload,
         },
       });
     } catch (error) {

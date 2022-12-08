@@ -1,37 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import Task from '@/components/Task/Task';
 import TaskForm from '@/components/TaskForm';
 import { useTasks } from '@/hooks/useTasks';
-import type { Task as TaskType } from '@/types/task';
 
 import styles from './styles.module.less';
 
 export default function TasksList() {
   const { fetch, tasks, create, changeStatus, remove, update } = useTasks();
 
-  const [activeTasksList, setActiveTasksList] = useState<TaskType[]>([]);
-  const [completedTasksList, setCompletedTasksList] = useState<TaskType[]>([]);
+  const activeTasksList = useMemo(
+    () =>
+      [...tasks]
+        .filter((task) => task.status !== 'completed')
+        .sort(
+          (a, b) =>
+            a.status.localeCompare(b.status) ||
+            b.created_at.getTime() - a.created_at.getTime(),
+        ),
+    [tasks],
+  );
 
-  useEffect(() => {
-    if (tasks.length) {
-      setActiveTasksList(
-        [...tasks]
-          .filter((task) => task.status !== 'completed')
-          .sort(
-            (a, b) =>
-              a.status.localeCompare(b.status) ||
-              b.created_at.getTime() - a.created_at.getTime(),
-          ),
-      );
-
-      setCompletedTasksList(
-        [...tasks]
-          .filter((task) => task.status === 'completed')
-          .sort((a, b) => b.created_at.getTime() - a.created_at.getTime()),
-      );
-    }
-  }, [tasks]);
+  const completedTasksList = useMemo(
+    () =>
+      [...tasks]
+        .filter((task) => task.status === 'completed')
+        .sort((a, b) => b.created_at.getTime() - a.created_at.getTime()),
+    [tasks],
+  );
 
   useEffect(() => {
     fetch();
