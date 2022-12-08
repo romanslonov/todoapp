@@ -1,5 +1,6 @@
 import { isAfter, parseISO } from 'date-fns';
 import { UploadResult } from 'firebase/storage';
+import { nanoid } from 'nanoid';
 
 import { TaskPayload } from '@/context/tasks/types';
 import { useTasksContext } from '@/hooks/useTasksContext';
@@ -21,6 +22,21 @@ export const useTasks = () => {
     remove: removeDocument,
   } = useFirestoreDocuments();
   const { upload: uploadFile, remove: removeFile } = useStorage();
+
+  /**
+   * The function that inject a unique id in file's name.
+   *
+   * NOTE: We need this a little hack to prevent file duplication the `Storage`.
+   *
+   * @param files - Original array passed from the user.
+   * @returns An array of modified files.
+   */
+  const addHashToFilesNames = (files: File[]) =>
+    files.map((file) => {
+      const name = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+      const extension = file.name.split('.').pop();
+      return new File([file], `${name}.${nanoid()}.${extension}`);
+    });
 
   /**
    * The function gets all `Tasks` from the databse and sets to the context.
@@ -56,7 +72,9 @@ export const useTasks = () => {
     try {
       const promises: Promise<UploadResult>[] = [];
 
-      payload.files.forEach((file) => {
+      const files = addHashToFilesNames(payload.files);
+
+      files.forEach((file) => {
         promises.push(uploadFile(file));
       });
 
@@ -70,7 +88,7 @@ export const useTasks = () => {
         files: uploads.map((file) => ({
           name: file.ref.name,
           path: file.ref.fullPath,
-          id: file.metadata.md5Hash!,
+          id: nanoid(),
         })),
       };
 
@@ -114,7 +132,9 @@ export const useTasks = () => {
     try {
       const promises: Promise<UploadResult>[] = [];
 
-      data.files.forEach((file) => {
+      const files = addHashToFilesNames(data.files);
+
+      files.forEach((file) => {
         promises.push(uploadFile(file));
       });
 
@@ -134,7 +154,7 @@ export const useTasks = () => {
             ? uploads.map((file) => ({
                 name: file.ref.name,
                 path: file.ref.fullPath,
-                id: file.metadata.md5Hash!,
+                id: nanoid(),
               }))
             : []),
           ...(task ? task.files : []),
