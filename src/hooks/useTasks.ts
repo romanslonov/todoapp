@@ -122,8 +122,6 @@ export const useTasks = () => {
       }
       const uploads = await Promise.all(promises);
 
-      console.log(data);
-
       const payload: Task = {
         ...task,
         ...data,
