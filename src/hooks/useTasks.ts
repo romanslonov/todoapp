@@ -14,6 +14,7 @@ import { useStorage } from './useStorage';
  * @returns A number of fuctions to manage `Tasks`.
  */
 export const useTasks = () => {
+  const collection = 'tasks';
   const { tasks, dispatch } = useTasksContext();
   const {
     fetch: fetchDocuments,
@@ -43,7 +44,7 @@ export const useTasks = () => {
    */
   const fetch = async () => {
     try {
-      const documents = await fetchDocuments('tasks');
+      const documents = await fetchDocuments(collection);
 
       const tasks = documents.map((document) => {
         const data = document.data();
@@ -92,7 +93,7 @@ export const useTasks = () => {
         })),
       };
 
-      const document = await createDocument('tasks', task);
+      const document = await createDocument(collection, task);
 
       dispatch({
         type: 'CREATE_TASK',
@@ -110,7 +111,7 @@ export const useTasks = () => {
    */
   const changeStatus = async (taskId: string, status: TaskStatus) => {
     try {
-      await updateDocument('tasks', taskId, { status });
+      await updateDocument(collection, taskId, { status });
       dispatch({
         type: 'CHANGE_STATUS_TASK',
         payload: {
@@ -161,7 +162,7 @@ export const useTasks = () => {
         ],
       };
 
-      await updateDocument('tasks', task.id, payload);
+      await updateDocument(collection, task.id, payload);
 
       dispatch({
         type: 'UPDATE_TASK',
@@ -188,7 +189,7 @@ export const useTasks = () => {
 
       await Promise.all(promises);
 
-      await removeDocument('tasks', task.id);
+      await removeDocument(collection, task.id);
 
       dispatch({
         type: 'REMOVE_TASK',
