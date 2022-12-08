@@ -159,7 +159,8 @@ export const useTasks = () => {
 
   /**
    * The function removes a `Task` from the database and the context.
-   * @param {string} taskId - Unique udentifier of a task.
+   *
+   * @param {string} task - Original task that should be removed.
    */
   const remove = async (task: Task) => {
     try {
