@@ -26,14 +26,12 @@ export default function TasksList() {
         <ul className={styles.list}>
           {activeTasksList.map((task) => (
             <li key={task.id}>
-              {
-                <Task
-                  onChangeStatus={changeStatus}
-                  onUpdate={update}
-                  onRemove={remove}
-                  task={task}
-                />
-              }
+              <Task
+                onChangeStatus={changeStatus}
+                onUpdate={update}
+                onRemove={remove}
+                task={task}
+              />
             </li>
           ))}
         </ul>
@@ -44,7 +42,9 @@ export default function TasksList() {
           <h2 className={styles.title}>Completed &mdash; {completedTasksList.length}</h2>
           <ul className={styles.list}>
             {completedTasksList.map((task) => (
-              <li key={task.id}>{<Task onChangeStatus={changeStatus} task={task} />}</li>
+              <li key={task.id}>
+                <Task onChangeStatus={changeStatus} task={task} />
+              </li>
             ))}
           </ul>
         </div>

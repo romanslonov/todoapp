@@ -14,7 +14,7 @@ import type { Task } from '@/types/task';
 
 import styles from './styles.module.less';
 
-type IFormInputs = {
+type FormInputs = {
   title: string;
   content: string;
   due: string;
@@ -43,7 +43,7 @@ export default function TaskForm({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<IFormInputs>({
+  } = useForm<FormInputs>({
     mode: 'onBlur',
     defaultValues: useMemo(
       () => ({
@@ -71,7 +71,7 @@ export default function TaskForm({
     setFielsURLs([...urls, ...filesURLs]);
   };
 
-  const submit = async (data: IFormInputs) => {
+  const submit = async (data: FormInputs) => {
     try {
       const files = [...data.files];
       const promises: Promise<UploadResult>[] = [];

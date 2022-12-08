@@ -53,7 +53,7 @@ export default function Task({
           {task.due && (
             <div className={styles.footer}>
               <div className={styles.footer__item}>
-                {<CalendarDaysIcon width={20} height={20} />}
+                <CalendarDaysIcon width={20} height={20} />
                 <span>{format(task.due, 'dd MMM yyyy h:mma')}</span>
               </div>
             </div>
@@ -65,11 +65,11 @@ export default function Task({
             icon
             onClick={() => toggleEdit(!isEditing)}
           >
-            {<Cog6ToothIcon width={16} height={16} />}
+            <Cog6ToothIcon width={16} height={16} />
           </Button>
           {onRemove && (
             <Button appearance="secondary" icon onClick={() => onRemove(task.id)}>
-              {<TrashIcon width={16} height={16} />}
+              <TrashIcon width={16} height={16} />
             </Button>
           )}
         </div>
